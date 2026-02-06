@@ -1,0 +1,22 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TourneeFutee", "TourneeFutee\TourneeFutee.csproj", "{05CA48AE-0ADE-4FC3-9AE7-5A5885D32DDB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TourneeFutee.Tests", "TourneeFutee.Tests\TourneeFutee.Tests.csproj", "{DF889E18-36E4-4E56-B1FE-074D8BE9F251}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{05CA48AE-0ADE-4FC3-9AE7-5A5885D32DDB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{05CA48AE-0ADE-4FC3-9AE7-5A5885D32DDB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{05CA48AE-0ADE-4FC3-9AE7-5A5885D32DDB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{05CA48AE-0ADE-4FC3-9AE7-5A5885D32DDB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DF889E18-36E4-4E56-B1FE-074D8BE9F251}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DF889E18-36E4-4E56-B1FE-074D8BE9F251}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DF889E18-36E4-4E56-B1FE-074D8BE9F251}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DF889E18-36E4-4E56-B1FE-074D8BE9F251}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
