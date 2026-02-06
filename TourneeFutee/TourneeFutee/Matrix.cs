@@ -2,16 +2,38 @@
 {
     public class Matrix
     {
-        // TODO : ajouter tous les attributs que vous jugerez pertinents 
-
-
-        /* Crée une matrice de dimensions `nbRows` x `nbColums`.
+        // TODO : ajouter tous les attributs que vous jugerez pertinents
+        private int nbRows;
+        private int nbColumns;
+        private float defaultValue;
+        private List<float> ligne;
+        private List<List<float>> listeLignes;
+        
+        /* Crée une matrice de dimensions `nbRows` x `nbColumns`.
          * Toutes les cases de cette matrice sont remplies avec `defaultValue`.
          * Lève une ArgumentOutOfRangeException si une des dimensions est négative
          */
         public Matrix(int nbRows = 0, int nbColumns = 0, float defaultValue = 0)
         {
-            // TODO : implémenter
+            this.nbRows = nbRows;
+            this.nbColumns = nbColumns;
+            this.defaultValue = defaultValue;
+
+            List<List<float>> listeLignes = new List<List<float>>(this.nbRows);
+            
+            for (int i = 0; i < this.nbRows; i++)
+            {
+                List<float> ligne = new List<float>(this.nbColumns);
+                
+                for (int j = 0; j < this.nbColumns; j++)
+                {
+                    ligne.Add(this.defaultValue);
+                }
+
+                listeLignes.Add(ligne);
+
+            }
+            
         }
 
         // Propriété : valeur par défaut utilisée pour remplir les nouvelles cases
@@ -93,6 +115,7 @@
             // TODO : implémenter
         }
 
+       
 
         // TODO : ajouter toutes les méthodes que vous jugerez pertinentes 
 
