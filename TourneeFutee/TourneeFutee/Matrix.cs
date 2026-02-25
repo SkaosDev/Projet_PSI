@@ -2,24 +2,33 @@
 {
     public class Matrix
     {
-        // TODO : ajouter tous les attributs que vous jugerez pertinents
         private int nbRows;
         private int nbColumns;
         private float defaultValue;
         private List<float> ligne;
-        private List<List<float>> listeLignes;
+        private List<List<float>> matrice;
+        
+        
+
+        #region MatrixConstructeurs
         
         /* Crée une matrice de dimensions `nbRows` x `nbColumns`.
          * Toutes les cases de cette matrice sont remplies avec `defaultValue`.
          * Lève une ArgumentOutOfRangeException si une des dimensions est négative
          */
-        public Matrix(int nbRows = 0, int nbColumns = 0, float defaultValue = 0)
+
+        public Matrix(int nbRows, int nbColumns, float defaultValue)
         {
+            if (nbRows < 0 || nbColumns < 0)
+            {
+                throw new ArgumentOutOfRangeException("Pas de dimensions négatives");
+            }
+            
             this.nbRows = nbRows;
             this.nbColumns = nbColumns;
             this.defaultValue = defaultValue;
 
-            List<List<float>> listeLignes = new List<List<float>>(this.nbRows);
+            List<List<float>> matrice = new List<List<float>>(this.nbRows);
             
             for (int i = 0; i < this.nbRows; i++)
             {
@@ -30,35 +39,75 @@
                     ligne.Add(this.defaultValue);
                 }
 
-                listeLignes.Add(ligne);
+                matrice.Add(ligne);
 
             }
             
-        }
+        } // constructeur exigeant
+        
+        public Matrix(int nbRows, int nbColumns)
+        {
+            if (nbRows < 0 || nbColumns < 0)
+            {
+                throw new ArgumentOutOfRangeException("Pas de dimensions négatives");
+            }
+            
+            this.nbRows = nbRows;
+            this.nbColumns = nbColumns;
+            this.defaultValue = 0;
+
+            List<List<float>> matrice = new List<List<float>>(this.nbRows);
+            
+            for (int i = 0; i < this.nbRows; i++)
+            {
+                List<float> ligne = new List<float>(this.nbColumns);
+                
+                for (int j = 0; j < this.nbColumns; j++)
+                {
+                    ligne.Add(this.defaultValue);
+                }
+
+                matrice.Add(ligne);
+
+            }
+            
+        } // constructeur avec dv = 0
+
+        #endregion
+        
+
+
+        #region MatrixPropriétés
 
         // Propriété : valeur par défaut utilisée pour remplir les nouvelles cases
         // Lecture seule
         public float DefaultValue
         {
-            get; // TODO : implémenter
-                 // pas de set
+            get { return defaultValue; }
+            // pas de set
         }
 
         // Propriété : nombre de lignes
         // Lecture seule
         public int NbRows
         {
-            get; // TODO : implémenter
-                 // pas de set
+            get { return nbRows; }
+            // pas de set
         }
 
         // Propriété : nombre de colonnes
         // Lecture seule
         public int NbColumns
         {
-            get; // TODO : implémenter
-                 // pas de set
+            get { return nbColumns; }
+            // pas de set
         }
+
+        #endregion
+
+
+
+        #region MatrixMethodes
 
         /* Insère une ligne à l'indice `i`. Décale les lignes suivantes vers le bas.
          * Toutes les cases de la nouvelle ligne contiennent DefaultValue.
@@ -67,7 +116,21 @@
          */
         public void AddRow(int i)
         {
-            // TODO : implémenter
+
+            if (i < 0 || i > this.nbRows) //vérifier si i positif et <= nbLignes de la matrice
+            {
+                throw new ArgumentOutOfRangeException("L'index est invalide");
+            }
+            
+            List<float> nvlLigne = new List<float>(this.nbColumns); //créer la row
+            
+            for (int j = 0; j < this.nbColumns; j++)  //initialiser ts les éléms à defaultValue
+            {
+                nvlLigne.Add(this.defaultValue);
+            }
+
+            this.matrice.Insert(i, nvlLigne); // insérer la ligne au bon indice.
+            
         }
 
         /* Insère une colonne à l'indice `j`. Décale les colonnes suivantes vers la droite.
@@ -77,45 +140,97 @@
          */
         public void AddColumn(int j)
         {
-            // TODO : implémenter
+            if (this.matrice.Count <= 0) // vérifier non vide
+            {
+                throw new InvalidOperationException("La matrice est vide");
+            }
+
+            if (j < 0 || j > this.nbColumns)
+            {
+                throw new ArgumentOutOfRangeException("L'index est invalide"); // vérifier index dans le range
+            }
+
+            foreach (List<float> ligne in this.matrice) // itérer sur chaque ligne et insérer en j-eme place
+            {
+                ligne.Insert(j, defaultValue);
+            }
+            
         }
 
         // Supprime la ligne à l'indice `i`. Décale les lignes suivantes vers le haut.
         // Lève une ArgumentOutOfRangeException si `i` est en dehors des indices valides
         public void RemoveRow(int i)
         {
-            // TODO : implémenter
+            if (i < 0 || i > this.nbRows) //vérifier si i positif et <= nbLignes de la matrice
+            {
+                throw new ArgumentOutOfRangeException("L'index est invalide");
+            }
+            
+            this.matrice.RemoveAt(i);
         }
 
         // Supprime la colonne à l'indice `j`. Décale les colonnes suivantes vers la gauche.
         // Lève une ArgumentOutOfRangeException si `j` est en dehors des indices valides
         public void RemoveColumn(int j)
         {
-            // TODO : implémenter
+            if (this.matrice.Count <= 0) // vérifier non vide
+            {
+                throw new InvalidOperationException("La matrice est vide");
+            }
+
+            if (j < 0 || j > this.nbColumns)
+            {
+                throw new ArgumentOutOfRangeException("L'index est invalide"); // vérifier index dans le range
+            }
+
+            foreach (List<float> ligne in this.matrice)
+            {
+                ligne.RemoveAt(j);
+            }
         }
 
         // Renvoie la valeur à la ligne `i` et colonne `j`
         // Lève une ArgumentOutOfRangeException si `i` ou `j` est en dehors des indices valides
         public float GetValue(int i, int j)
         {
-            // TODO : implémenter
-            return 0.0f;
+            if (i < 0 || i >= this.nbRows || j < 0 || j >= this.nbColumns)
+            {
+                throw new ArgumentOutOfRangeException("Indice(s) invalides");
+            }
+
+            return this.matrice[i][j];
         }
 
         // Affecte la valeur à la ligne `i` et colonne `j` à `v`
         // Lève une ArgumentOutOfRangeException si `i` ou `j` est en dehors des indices valides
         public void SetValue(int i, int j, float v)
         {
-            // TODO : implémenter
+            if (i < 0 || i >= this.nbRows || j < 0 || j >= this.nbColumns)
+            {
+                throw new ArgumentOutOfRangeException("Indice(s) invalides");
+            }
+            
+            this.matrice[i][j] = v;
         }
 
         // Affiche la matrice
         public void Print()
         {
             // TODO : implémenter
+            foreach (List<float> ligne in this.matrice)
+            {
+                foreach (float e in ligne)
+                {
+                    Console.Write(e + " ");
+                }
+                Console.WriteLine();
+            }
+            
         }
 
-       
+        #endregion
+
+        
 
         // TODO : ajouter toutes les méthodes que vous jugerez pertinentes 
 
