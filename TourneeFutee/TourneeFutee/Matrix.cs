@@ -126,7 +126,7 @@
 
             if (i < 0 || i > this.nbRows) //vérifier si i positif et <= nbLignes de la matrice
             {
-                throw new ArgumentOutOfRangeException("L'index est invalide");
+                throw new ArgumentOutOfRangeException(nameof(i), $"L'index {i} est invalide");
             }
             
             List<float> nvlLigne = new List<float>(this.nbColumns); //créer la row
@@ -137,7 +137,8 @@
             }
 
             this.matrice.Insert(i, nvlLigne); // insérer la ligne au bon indice.
-            
+
+            this.nbRows++;
         }
 
         /* Insère une colonne à l'indice `j`. Décale les colonnes suivantes vers la droite.
@@ -154,14 +155,16 @@
 
             if (j < 0 || j > this.nbColumns)
             {
-                throw new ArgumentOutOfRangeException("L'index est invalide"); // vérifier index dans le range
+                throw new ArgumentOutOfRangeException(nameof(j), $"L'index {j} est invalide"); // vérifier index dans le range
             }
 
             foreach (List<float> ligne in this.matrice) // itérer sur chaque ligne et insérer en j-eme place
             {
                 ligne.Insert(j, defaultValue);
             }
-            
+
+            this.nbColumns++;
+
         }
 
         // Supprime la ligne à l'indice `i`. Décale les lignes suivantes vers le haut.
@@ -170,10 +173,12 @@
         {
             if (i < 0 || i > this.nbRows) //vérifier si i positif et <= nbLignes de la matrice
             {
-                throw new ArgumentOutOfRangeException("L'index est invalide");
+                throw new ArgumentOutOfRangeException(nameof(i), $"L'index {i} est invalide");
             }
             
             this.matrice.RemoveAt(i);
+
+            this.nbRows--;
         }
 
         // Supprime la colonne à l'indice `j`. Décale les colonnes suivantes vers la gauche.
@@ -187,13 +192,15 @@
 
             if (j < 0 || j > this.nbColumns)
             {
-                throw new ArgumentOutOfRangeException("L'index est invalide"); // vérifier index dans le range
+                throw new ArgumentOutOfRangeException(nameof(j), $"L'index {j} est invalide"); // vérifier index dans le range
             }
 
             foreach (List<float> ligne in this.matrice)
             {
                 ligne.RemoveAt(j);
             }
+
+            this.nbColumns--;
         }
 
         // Renvoie la valeur à la ligne `i` et colonne `j`
