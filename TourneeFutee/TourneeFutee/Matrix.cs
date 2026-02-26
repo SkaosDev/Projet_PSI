@@ -5,7 +5,6 @@
         private int nbRows;
         private int nbColumns;
         private float defaultValue;
-        private List<float> ligne;
         private List<List<float>> matrice;
         
         
@@ -19,16 +18,20 @@
 
         public Matrix(int nbRows, int nbColumns, float defaultValue)
         {
-            if (nbRows < 0 || nbColumns < 0)
+            if (nbRows < 0)
             {
-                throw new ArgumentOutOfRangeException("Pas de dimensions négatives");
+                throw new ArgumentOutOfRangeException(nameof(nbRows), "Le nombre de lignes ne peut pas être négatif.");
+            }
+            if (nbColumns < 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(nbColumns), "Le nombre de colonnes ne peut pas être négatif.");
             }
             
             this.nbRows = nbRows;
             this.nbColumns = nbColumns;
             this.defaultValue = defaultValue;
 
-            List<List<float>> matrice = new List<List<float>>(this.nbRows);
+            this.matrice = new List<List<float>>(this.nbRows);
             
             for (int i = 0; i < this.nbRows; i++)
             {
@@ -47,9 +50,13 @@
         
         public Matrix(int nbRows, int nbColumns)
         {
-            if (nbRows < 0 || nbColumns < 0)
+            if (nbRows < 0)
             {
-                throw new ArgumentOutOfRangeException("Pas de dimensions négatives");
+                throw new ArgumentOutOfRangeException(nameof(nbRows), "Le nombre de lignes ne peut pas être négatif.");
+            }
+            if (nbColumns < 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(nbColumns), "Le nombre de colonnes ne peut pas être négatif.");
             }
             
             this.nbRows = nbRows;
