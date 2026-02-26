@@ -16,7 +16,7 @@
         {
             this.directed = directed;
             this.noEdgeValue = noEdgeValue;
-            this.adjacencyMatrix = new Matrix();
+            this.adjacencyMatrix = new Matrix(0,0);
             this.vertexIndices = new Dictionary<string, int>();
             this.vertexValues = new Dictionary<string, float>();
         }
