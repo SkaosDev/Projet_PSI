@@ -63,7 +63,7 @@
             this.nbColumns = nbColumns;
             this.defaultValue = 0;
 
-            List<List<float>> matrice = new List<List<float>>(this.nbRows);
+            this.matrice = new List<List<float>>(this.nbRows);
             
             for (int i = 0; i < this.nbRows; i++)
             {
