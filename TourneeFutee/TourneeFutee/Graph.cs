@@ -24,6 +24,12 @@
 
         // --- Propriétés ---
 
+        // Renvoie le nom du sommet correspondant à l'indice `index` dans la matrice d'adjacence
+        public string GetVertexName(int index)
+        {
+            return vertexIndices.FirstOrDefault(x => x.Value == index).Key;
+        }
+
         // Propriété : ordre du graphe
         // Lecture seule
         public int Order
@@ -39,6 +45,14 @@
         {
             get { 
                 return directed; 
+            }
+        }
+
+        public Matrix AdjacencyMatrix
+        {
+            get
+            {
+                return adjacencyMatrix;
             }
         }
 
