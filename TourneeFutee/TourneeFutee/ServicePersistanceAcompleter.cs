@@ -216,6 +216,39 @@ namespace TourneeFutee
             //
             // Attention : conserver l'ordre des étapes est essentiel pour
             //             pouvoir reconstruire la tournée fidèlement au chargement.
+            
+            
+            
+            using (var conn= OpenConnection())
+            using (var transaction = conn.BeginTransaction())
+            {
+                try
+                {
+                    var cmdTournee = new MySqlCommand(
+                            "INSERT INTO Tournee (cout_total, graphe_id) VALUES (@ctt, @gid); " +
+                            "SELECT LAST_INSERT_ID();",
+                            conn, transaction);
+                    cmdTournee.Parameters.AddWithValue("@ctt", t.Cost);
+                    cmdTournee.Parameters.AddWithValue("@gid", graphId);
+                    uint tid = Convert.ToUInt32(cmdTournee.ExecuteScalar());
+
+
+                    var cmdEtape =
+                        new MySqlCommand(
+                            "INSERT INTO EtapeTournee (tournee_id, numero_ordre, sommet_id) VALUES (@tid, @numord, @sid)");
+                    cmdEtape.Parameters.AddWithValue("@tid", tid);
+                    cmdEtape.Parameters.Add("@numord", MySqlDbType.Int32);
+                    cmdEtape.Parameters.Add("sid", MySqlDbType.Int32);
+
+                    int taille = t.NbSegments;
+                    for (int i = 0; i <= taille; i++)
+                    {
+                        int numeroOrd = i;
+                        string sommetId = t.GetVertices(i);
+                    }
+                }
+            }
+            
 
             throw new NotImplementedException("SaveTour non implémenté.");
         }
