@@ -1,5 +1,4 @@
 using System;
-using System.IO;
 using MySql.Data.MySqlClient;
 
 namespace TourneeFutee
@@ -15,6 +14,7 @@ namespace TourneeFutee
         // ─────────────────────────────────────────────────────────────────────
 
         private readonly string _connectionString;
+        private MySqlConnection conn;
 
         // TODO : si vous avez besoin de maintenir une connexion ouverte,
         //        ajoutez un attribut MySqlConnection ici.
