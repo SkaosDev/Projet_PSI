@@ -4,18 +4,32 @@
     public class Tour
     {
         private List<(string source, string destination)> segments;
+        private List<string> vertices;
         private float cost;
         
         public Tour(List<(string source, string destination)> segments, float cost)
         {
             this.segments = segments;
+            this.vertices = new List<string>();
             this.cost = cost;
         }
         
         public Tour()
         {
             this.segments = new List<(string source, string destination)>();
+            this.vertices = new List<string>();
             this.cost = 0.0f;
+        }
+
+        public Tour(List<string> vertices, float cost)
+        {
+            this.segments = new List<(string source, string destination)>();
+            this.vertices = new List<string>(vertices);
+            this.cost = cost;
+            for (int i = 0; i < vertices.Count - 1; i++)
+            {
+                this.segments.Add((vertices[i], vertices[i + 1]));
+            }
         }
 
         // propriétés
@@ -26,6 +40,11 @@
             get {
                 return this.cost;
             }
+        }
+
+        public IList<string> Vertices
+        {
+            get { return this.vertices; }
         }
 
         // Nombre de trajets dans la tournée
