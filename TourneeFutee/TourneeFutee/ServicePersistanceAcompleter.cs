@@ -112,13 +112,13 @@ namespace TourneeFutee
                         string sourceName = g.GetVertexName(i);
                         for (int j = 0; j < g.Order; j++)
                         {
+                            if (!g.Directed && j <= i) continue;
+
                             string destName = g.GetVertexName(j);
-                            
-                            // On récupère le poids via la matrice 
+
                             float weight = g.AdjacencyMatrix.GetValue(i, j);
 
-                            // On n'insère que si l'arc existe 
-                            if (weight != g.NoEdgeValue) 
+                            if (weight != g.NoEdgeValue)
                             {
                                 cmdArc.Parameters["@src"].Value = sommetNameToId[sourceName];
                                 cmdArc.Parameters["@dest"].Value = sommetNameToId[destName];
@@ -174,8 +174,8 @@ namespace TourneeFutee
             {
                 uint sommetId = readerSommets.GetUInt32("id");
                 string nom = readerSommets.GetString("nom");
-                string valeur = readerSommets.GetString("valeur");
-                graph.AddVertex(nom, float.Parse(valeur));
+                float valeur = readerSommets.GetFloat("valeur");
+                graph.AddVertex(nom, valeur);
                 idToName[sommetId] = nom;
             }
             readerSommets.Close();
