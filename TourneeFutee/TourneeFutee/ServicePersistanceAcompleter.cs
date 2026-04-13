@@ -38,12 +38,19 @@ namespace TourneeFutee
         public ServicePersistance(string serverIp, string dbname, string user, string pwd)
         {
             string certPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "ca.pem");
-            _connectionString = $"server={serverIp};database={dbname};uid={user};pwd={pwd};SslMode=Required;SslCa={certPath};";
 
-            using (var conn = OpenConnection())
+            string host = serverIp;
+            string port = "3306";
+            if (serverIp.Contains(":"))
             {
-                conn.Close();
+                var parts = serverIp.Split(':');
+                host = parts[0];
+                port = parts[1];
             }
+
+            _connectionString = $"server={host};port={port};database={dbname};uid={user};pwd={pwd};SslMode=Required;SslCa={certPath};";
+
+            conn = OpenConnection();
         }
 
         // ─────────────────────────────────────────────────────────────────────
