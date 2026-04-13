@@ -82,7 +82,7 @@
             {
                 return this.segments[index - 1].destination;
             }
-            return null;
+            return "";
         }
         
         public void AddSegment((string source, string destination) segment, float segmentCost)
