@@ -73,6 +73,18 @@
             }
         }
 
+        public string GetVertices(int index)
+        {
+            if (index >= 0 && index < this.vertices.Count - 1)
+            {
+                return this.segments[index].source;
+            }else if(index == this.vertices.Count - 1)
+            {
+                return this.segments[index - 1].destination;
+            }
+            return null;
+        }
+        
         public void AddSegment((string source, string destination) segment, float segmentCost)
         {
             this.segments.Add(segment);
