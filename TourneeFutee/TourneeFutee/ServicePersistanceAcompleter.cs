@@ -261,6 +261,7 @@ namespace TourneeFutee
                     }
                 }
 
+                transaction.Commit();
                 return tid;
             }
             
@@ -284,29 +285,38 @@ namespace TourneeFutee
             //      ORDER BY numero_ordre -> reconstruire la séquence ordonnée de sommets
             //   3. Construire et retourner l'instance Tour
 
-            var cmdTour = new MySqlCommand("SELECT * FROM Tour WHERE id = @id", conn);
+            var cmdTour = new MySqlCommand("SELECT * FROM Tournee WHERE id = @id", conn);
             cmdTour.Parameters.AddWithValue("@id", id);
-            
+
             var readerTour = cmdTour.ExecuteReader();
             readerTour.Read();
             int graphId = readerTour.GetInt32("graphe_id");
-            Graph graph = LoadGraph((uint)graphId);
-            Tour tour = new Tour();
             readerTour.Close();
-            
+
+            Graph graph = LoadGraph((uint)graphId);
+
             var cmdEtapes = new MySqlCommand(
-                "SELECT s.nom FROM EtapeTournee et JOIN Sommet s ON et.sommet_id = s.id WHERE et.tournee_id = @id ORDER BY et.numero_ordre", 
+                "SELECT s.nom FROM EtapeTournee et JOIN Sommet s ON et.sommet_id = s.id WHERE et.tournee_id = @id ORDER BY et.numero_ordre",
                 conn);
             cmdEtapes.Parameters.AddWithValue("@id", id);
             var readerEtapes = cmdEtapes.ExecuteReader();
+
+            var verticesList = new List<string>();
+
             while (readerEtapes.Read())
             {
                 string sommetName = readerEtapes.GetString("nom");
-                tour.Vertices.Add(sommetName);
+                verticesList.Add(sommetName);
             }
             readerEtapes.Close();
-            
-            return tour;
+
+            float totalCost = 0f;
+            for (int i = 0; i < verticesList.Count - 1; i++)
+            {
+                totalCost += graph.GetEdgeWeight(verticesList[i], verticesList[i + 1]);
+            }
+
+            return new Tour(verticesList, totalCost);
         }
 
         // ─────────────────────────────────────────────────────────────────────
