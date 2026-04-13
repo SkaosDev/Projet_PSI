@@ -236,7 +236,27 @@ namespace TourneeFutee
             //      ORDER BY numero_ordre -> reconstruire la séquence ordonnée de sommets
             //   3. Construire et retourner l'instance Tour
 
-            throw new NotImplementedException("LoadTour non implémenté.");
+            var cmdTour = new MySqlCommand("SELECT * FROM Tour WHERE id = @id", conn);
+            cmdTour.Parameters.AddWithValue("@id", id);
+            
+            var readerTour = cmdTour.ExecuteReader();
+            readerTour.Read();
+            Tour tour = new Tour();
+            readerTour.Close();
+            
+            var cmdEtapes = new MySqlCommand(
+                "SELECT s.nom FROM EtapeTournee et JOIN Sommet s ON et.sommet_id = s.id WHERE et.tournee_id = @id ORDER BY et.numero_ordre", 
+                conn);
+            cmdEtapes.Parameters.AddWithValue("@id", id);
+            var readerEtapes = cmdEtapes.ExecuteReader();
+            while (readerEtapes.Read())
+            {
+                string sommetName = readerEtapes.GetString("nom");
+                tour.Vertices.Add(sommetName);
+            }
+            readerEtapes.Close();
+            
+            return tour;
         }
 
         // ─────────────────────────────────────────────────────────────────────
