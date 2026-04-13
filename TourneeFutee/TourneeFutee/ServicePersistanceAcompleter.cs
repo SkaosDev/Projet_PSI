@@ -63,21 +63,81 @@ namespace TourneeFutee
         /// </summary>
         /// <param name="g">Le graphe à sauvegarder.</param>
         /// <returns>Identifiant du graphe en base de données (AUTO_INCREMENT).</returns>
+        
         public uint SaveGraph(Graph g)
         {
-            // TODO : implémenter la sauvegarde du graphe
-            //
-            // Ordre recommandé :
-            //   1. INSERT dans la table Graphe -> récupérer l'id avec LAST_INSERT_ID()
-            //   2. Pour chaque sommet de g : INSERT dans Sommet (valeur + graphe_id)
-            //      -> conserver la correspondance sommet C# <-> id BdD
-            //   3. Pour chaque arc de la matrice d'adjacence (poids != +inf) :
-            //      INSERT dans Arc (sommet_source_id, sommet_dest_id, poids, graphe_id)
-            //
-            // Exemple pour récupérer l'id généré :
-            //   uint id = Convert.ToUInt32(cmd.ExecuteScalar());
+            using (var conn = OpenConnection())
+            using (var transaction = conn.BeginTransaction())
+            {
+                try
+                {
+                    // 1. Insertion du Graphe
+                    var cmdGraphe = new MySqlCommand("INSERT INTO Graphe (est_oriente, no_edge_value) VALUES (@dir, @nev); SELECT LAST_INSERT_ID();", conn, transaction);
+                    cmdGraphe.Parameters.AddWithValue("@dir", g.Directed);
+                    cmdGraphe.Parameters.AddWithValue("@nev", g.NoEdgeValue); 
+                    uint gid = Convert.ToUInt32(cmdGraphe.ExecuteScalar());
 
-            throw new NotImplementedException("SaveGraph non implémenté.");
+                    // Insertion des Sommets
+                    // On stocke la correspondance : Nom du sommet (C#) -> ID auto-incrémenté (SQL)
+                    var sommetNameToId = new Dictionary<string, uint>();
+
+                    var cmdSommet = new MySqlCommand("INSERT INTO Sommet(nom, valeur, graphe_id) VALUES (@nom, @val, @gid); SELECT LAST_INSERT_ID();", conn, transaction);
+                    cmdSommet.Parameters.Add("@nom", MySqlDbType.VarChar);
+                    cmdSommet.Parameters.Add("@val", MySqlDbType.Float);
+                    cmdSommet.Parameters.AddWithValue("@gid", gid);
+
+                    // On itère sur les noms 
+                    for (int i = 0; i < g.Order; i++)
+                    {
+                        string sName = g.GetVertexName(i);
+                        float sVal = g.GetVertexValue(sName);
+
+                        cmdSommet.Parameters["@nom"].Value = sName;
+                        cmdSommet.Parameters["@val"].Value = sVal;
+                        
+                        uint dbId = Convert.ToUInt32(cmdSommet.ExecuteScalar());
+                        sommetNameToId.Add(sName, dbId);
+                    }
+
+                    // Insertion des Arcs
+                    var cmdArc = new MySqlCommand(
+                        "INSERT INTO Arc(sommet_source_id, sommet_dest_id, poids, graphe_id) VALUES (@src, @dest, @p, @gid)", 
+                        conn, transaction);
+                    cmdArc.Parameters.Add("@src", MySqlDbType.UInt32);
+                    cmdArc.Parameters.Add("@dest", MySqlDbType.UInt32);
+                    cmdArc.Parameters.Add("@p", MySqlDbType.Float);
+                    cmdArc.Parameters.AddWithValue("@gid", gid);
+
+                    for (int i = 0; i < g.Order; i++)
+                    {
+                        string sourceName = g.GetVertexName(i);
+                        for (int j = 0; j < g.Order; j++)
+                        {
+                            string destName = g.GetVertexName(j);
+                            
+                            // On récupère le poids via la matrice 
+                            float weight = g.AdjacencyMatrix.GetValue(i, j);
+
+                            // On n'insère que si l'arc existe 
+                            if (weight != g.NoEdgeValue) 
+                            {
+                                cmdArc.Parameters["@src"].Value = sommetNameToId[sourceName];
+                                cmdArc.Parameters["@dest"].Value = sommetNameToId[destName];
+                                cmdArc.Parameters["@p"].Value = weight;
+                                cmdArc.ExecuteNonQuery();
+                            }
+                        }
+                    }
+
+                    transaction.Commit();
+                    return gid;
+                }
+                catch (Exception)
+                {
+                    transaction.Rollback();
+                    throw;
+                }
+            }
         }
 
         /// <summary>

@@ -56,6 +56,14 @@
             }
         }
 
+        public float NoEdgeValue
+        {
+            get
+            {
+                return noEdgeValue;
+            }
+        }
+
 
         // --- Gestion des sommets ---
 
