@@ -97,8 +97,45 @@ namespace TourneeFutee
             //       correspondent à ceux sauvegardés)
             //   3. SELECT dans Arc WHERE graphe_id = @id -> reconstruire la matrice
             //      d'adjacence en utilisant les correspondances sommet_id <-> indice
+            
+            var cmdGraphe = new MySqlCommand("SELECT * FROM Graphe WHERE id = @id", conn);
+            cmdGraphe.Parameters.AddWithValue("@id", id);
+            var readerGraphe = cmdGraphe.ExecuteReader();
+            readerGraphe.Read();
+            bool isOriented = readerGraphe.GetBoolean("est_oriente");
+            readerGraphe.Close();
 
-            throw new NotImplementedException("LoadGraph non implémenté.");
+            Graph graph = new Graph(isOriented);
+            
+            var idToName = new Dictionary<uint, string>();
+            var cmdSommets = new MySqlCommand("SELECT * FROM Sommet WHERE graphe_id = @id ORDER BY id", conn);
+            cmdSommets.Parameters.AddWithValue("@id", id);
+            var readerSommets = cmdSommets.ExecuteReader();
+            while (readerSommets.Read())
+            {
+                uint sommetId = readerSommets.GetUInt32("id");
+                string nom = readerSommets.GetString("nom");
+                string valeur = readerSommets.GetString("valeur");
+                graph.AddVertex(nom, float.Parse(valeur));
+                idToName[sommetId] = nom;
+            }
+            readerSommets.Close();
+            
+            var cmdArcs = new MySqlCommand("SELECT * FROM Arc WHERE graphe_id = @id", conn);
+            cmdArcs.Parameters.AddWithValue("@id", id);
+            var readerArcs = cmdArcs.ExecuteReader();
+            while (readerArcs.Read())
+            {
+                uint sourceId = readerArcs.GetUInt32("sommet_source");
+                uint destId = readerArcs.GetUInt32("sommet_dest");
+                float poids = readerArcs.GetFloat("poids");
+                string nomSource = idToName[sourceId];
+                string nomDest = idToName[destId];
+                graph.AddEdge(nomSource, nomDest, poids);
+            }
+            readerArcs.Close();
+
+            return graph;
         }
 
         /// <summary>
