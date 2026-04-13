@@ -274,6 +274,8 @@ namespace TourneeFutee
             
             var readerTour = cmdTour.ExecuteReader();
             readerTour.Read();
+            int graphId = readerTour.GetInt32("graphe_id");
+            Graph graph = LoadGraph((uint)graphId);
             Tour tour = new Tour();
             readerTour.Close();
             
