@@ -225,9 +225,9 @@ namespace TourneeFutee
                 try
                 {
                     var cmdTournee = new MySqlCommand(
-                            "INSERT INTO Tournee (cout_total, graphe_id) VALUES (@ctt, @gid); " +
-                            "SELECT LAST_INSERT_ID();",
-                            conn, transaction);
+                        "INSERT INTO Tournee (cout_total, graphe_id) VALUES (@ctt, @gid); " +
+                        "SELECT LAST_INSERT_ID();",
+                        conn, transaction);
                     cmdTournee.Parameters.AddWithValue("@ctt", t.Cost);
                     cmdTournee.Parameters.AddWithValue("@gid", graphId);
                     uint tid = Convert.ToUInt32(cmdTournee.ExecuteScalar());
@@ -235,17 +235,34 @@ namespace TourneeFutee
 
                     var cmdEtape =
                         new MySqlCommand(
-                            "INSERT INTO EtapeTournee (tournee_id, numero_ordre, sommet_id) VALUES (@tid, @numord, @sid)");
+                            "INSERT INTO EtapeTournee (tournee_id, numero_ordre, sommet_id) VALUES (@tid, @numord, @sid)",
+                            conn, transaction);
                     cmdEtape.Parameters.AddWithValue("@tid", tid);
                     cmdEtape.Parameters.Add("@numord", MySqlDbType.Int32);
-                    cmdEtape.Parameters.Add("sid", MySqlDbType.Int32);
+                    cmdEtape.Parameters.Add("sid", MySqlDbType.UInt32);
 
-                    int taille = t.NbSegments;
-                    for (int i = 0; i <= taille; i++)
+                    var cmdIdSommet = new MySqlCommand("SELECT id FROM Sommet WHERE nom = @nom AND graphe_id = @gid",
+                        conn, transaction);
+
+                    int taille = t.NbSegments + 1;
+                    for (int i = 0; i < taille; i++)
                     {
-                        int numeroOrd = i;
-                        string sommetId = t.GetVertices(i);
+                        string vertexName = t.GetVertices(i); // Récupère le nom
+                        cmdIdSommet.Parameters["@nom"].Value = vertexName;
+                        cmdIdSommet.Parameters["@gid"].Value = graphId;
+
+                        // nécessite requête de recherche 
+                        uint idSommet = Convert.ToUInt32(cmdIdSommet.ExecuteScalar());
+
+                        cmdEtape.Parameters["@numord"].Value = i;
+                        cmdEtape.Parameters["@sid"].Value = idSommet;
+                        cmdEtape.ExecuteNonQuery();
                     }
+                }
+
+                catch (Exception e)
+                {
+                    return 0;
                 }
             }
             
