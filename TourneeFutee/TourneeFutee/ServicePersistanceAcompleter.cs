@@ -14,6 +14,7 @@ namespace TourneeFutee
         // ─────────────────────────────────────────────────────────────────────
 
         private readonly string _connectionString;
+        private MySqlConnection conn;
 
         // TODO : si vous avez besoin de maintenir une connexion ouverte,
         //        ajoutez un attribut MySqlConnection ici.
@@ -36,12 +37,19 @@ namespace TourneeFutee
         /// <exception cref="Exception">Levée si la connexion échoue.</exception>
         public ServicePersistance(string serverIp, string dbname, string user, string pwd)
         {
-          // TODO : initialiser et ouvrir la connexion à la base de données
-        // Exemple :
-            _connectionString = $"server={serverIp};database={dbname};uid={user};pwd={pwd};";
-
+            // TODO : initialiser et ouvrir la connexion à la base de données
+            // Exemple :
+            using (var conn = new MySqlConnection(_connectionString))
+            {
+                conn.Open();
+                string sql = "SELECT nom FROM Graphe WHERE graphe_id = 0";
+            }
+            
+            
             // TODO : tester la connexion dès la construction
             //        (ouvrir puis fermer une connexion pour valider les paramètres)
+            
+            
             throw new NotImplementedException("Constructeur non implémenté.");
         }
 
