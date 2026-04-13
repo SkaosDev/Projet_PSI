@@ -234,8 +234,7 @@ namespace TourneeFutee
                     tid = Convert.ToUInt32(cmdTournee.ExecuteScalar());
 
 
-                    var cmdEtape =
-                        new MySqlCommand(
+                    var cmdEtape = new MySqlCommand(
                             "INSERT INTO EtapeTournee (tournee_id, numero_ordre, sommet_id) VALUES (@tid, @numord, @sid)",
                             conn, transaction);
                     cmdEtape.Parameters.AddWithValue("@tid", tid);
