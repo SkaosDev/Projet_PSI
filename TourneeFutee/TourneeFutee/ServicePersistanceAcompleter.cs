@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using MySql.Data.MySqlClient;
 
 namespace TourneeFutee
@@ -36,13 +37,13 @@ namespace TourneeFutee
         /// <exception cref="Exception">Levée si la connexion échoue.</exception>
         public ServicePersistance(string serverIp, string dbname, string user, string pwd)
         {
-          // TODO : initialiser et ouvrir la connexion à la base de données
-        // Exemple :
-            _connectionString = $"server={serverIp};database={dbname};uid={user};pwd={pwd};";
+            string certPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "ca.pem");
+            _connectionString = $"server={serverIp};database={dbname};uid={user};pwd={pwd};SslMode=Required;SslCa={certPath};";
 
-            // TODO : tester la connexion dès la construction
-            //        (ouvrir puis fermer une connexion pour valider les paramètres)
-            throw new NotImplementedException("Constructeur non implémenté.");
+            using (var conn = OpenConnection())
+            {
+                conn.Close();
+            }
         }
 
         // ─────────────────────────────────────────────────────────────────────

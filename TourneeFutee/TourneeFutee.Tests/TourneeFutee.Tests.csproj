@@ -24,4 +24,10 @@
       <ProjectReference Include="..\TourneeFutee\TourneeFutee.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <None Update="ca.pem">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+    </ItemGroup>
+
 </Project>
