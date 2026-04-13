@@ -112,13 +112,13 @@ namespace TourneeFutee
                         string sourceName = g.GetVertexName(i);
                         for (int j = 0; j < g.Order; j++)
                         {
+                            if (!g.Directed && j <= i) continue;
+
                             string destName = g.GetVertexName(j);
-                            
-                            // On récupère le poids via la matrice 
+
                             float weight = g.AdjacencyMatrix.GetValue(i, j);
 
-                            // On n'insère que si l'arc existe 
-                            if (weight != g.NoEdgeValue) 
+                            if (weight != g.NoEdgeValue)
                             {
                                 cmdArc.Parameters["@src"].Value = sommetNameToId[sourceName];
                                 cmdArc.Parameters["@dest"].Value = sommetNameToId[destName];
@@ -174,8 +174,8 @@ namespace TourneeFutee
             {
                 uint sommetId = readerSommets.GetUInt32("id");
                 string nom = readerSommets.GetString("nom");
-                string valeur = readerSommets.GetString("valeur");
-                graph.AddVertex(nom, float.Parse(valeur));
+                float valeur = readerSommets.GetFloat("valeur");
+                graph.AddVertex(nom, valeur);
                 idToName[sommetId] = nom;
             }
             readerSommets.Close();
@@ -269,7 +269,27 @@ namespace TourneeFutee
             //      ORDER BY numero_ordre -> reconstruire la séquence ordonnée de sommets
             //   3. Construire et retourner l'instance Tour
 
-            throw new NotImplementedException("LoadTour non implémenté.");
+            var cmdTour = new MySqlCommand("SELECT * FROM Tour WHERE id = @id", conn);
+            cmdTour.Parameters.AddWithValue("@id", id);
+            
+            var readerTour = cmdTour.ExecuteReader();
+            readerTour.Read();
+            Tour tour = new Tour();
+            readerTour.Close();
+            
+            var cmdEtapes = new MySqlCommand(
+                "SELECT s.nom FROM EtapeTournee et JOIN Sommet s ON et.sommet_id = s.id WHERE et.tournee_id = @id ORDER BY et.numero_ordre", 
+                conn);
+            cmdEtapes.Parameters.AddWithValue("@id", id);
+            var readerEtapes = cmdEtapes.ExecuteReader();
+            while (readerEtapes.Read())
+            {
+                string sommetName = readerEtapes.GetString("nom");
+                tour.Vertices.Add(sommetName);
+            }
+            readerEtapes.Close();
+            
+            return tour;
         }
 
         // ─────────────────────────────────────────────────────────────────────
