@@ -72,9 +72,8 @@ namespace TourneeFutee
                 try
                 {
                     // 1. Insertion du Graphe
-                    var cmdGraphe = new MySqlCommand("INSERT INTO Graphe (est_oriente, no_edge_value) VALUES (@dir, @nev); SELECT LAST_INSERT_ID();", conn, transaction);
+                    var cmdGraphe = new MySqlCommand("INSERT INTO Graphe (est_oriente) VALUES (@dir); SELECT LAST_INSERT_ID();", conn, transaction);
                     cmdGraphe.Parameters.AddWithValue("@dir", g.Directed);
-                    cmdGraphe.Parameters.AddWithValue("@nev", g.NoEdgeValue); 
                     uint gid = Convert.ToUInt32(cmdGraphe.ExecuteScalar());
 
                     // Insertion des Sommets
@@ -101,7 +100,7 @@ namespace TourneeFutee
 
                     // Insertion des Arcs
                     var cmdArc = new MySqlCommand(
-                        "INSERT INTO Arc(sommet_source_id, sommet_dest_id, poids, graphe_id) VALUES (@src, @dest, @p, @gid)", 
+                        "INSERT INTO Arc(sommet_source, sommet_dest, poids, graphe_id) VALUES (@src, @dest, @p, @gid)", 
                         conn, transaction);
                     cmdArc.Parameters.Add("@src", MySqlDbType.UInt32);
                     cmdArc.Parameters.Add("@dest", MySqlDbType.UInt32);
