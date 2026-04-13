@@ -207,6 +207,7 @@ namespace TourneeFutee
         /// <returns>Identifiant de la tournée en base de données (AUTO_INCREMENT).</returns>
         public uint SaveTour(uint graphId, Tour t)
         {
+            uint tid;
             // TODO : implémenter la sauvegarde de la tournée
             //
             // Ordre recommandé :
@@ -222,7 +223,7 @@ namespace TourneeFutee
             using (var conn= OpenConnection())
             using (var transaction = conn.BeginTransaction())
             {
-                try
+                
                 {
                     var cmdTournee = new MySqlCommand(
                         "INSERT INTO Tournee (cout_total, graphe_id) VALUES (@ctt, @gid); " +
@@ -230,7 +231,7 @@ namespace TourneeFutee
                         conn, transaction);
                     cmdTournee.Parameters.AddWithValue("@ctt", t.Cost);
                     cmdTournee.Parameters.AddWithValue("@gid", graphId);
-                    uint tid = Convert.ToUInt32(cmdTournee.ExecuteScalar());
+                    tid = Convert.ToUInt32(cmdTournee.ExecuteScalar());
 
 
                     var cmdEtape =
@@ -243,13 +244,14 @@ namespace TourneeFutee
 
                     var cmdIdSommet = new MySqlCommand("SELECT id FROM Sommet WHERE nom = @nom AND graphe_id = @gid",
                         conn, transaction);
+                    cmdIdSommet.Parameters.Add("@nom", MySqlDbType.String);
+                    cmdIdSommet.Parameters.AddWithValue("@gid", graphId);
 
                     int taille = t.NbSegments + 1;
                     for (int i = 0; i < taille; i++)
                     {
                         string vertexName = t.GetVertices(i); // Récupère le nom
                         cmdIdSommet.Parameters["@nom"].Value = vertexName;
-                        cmdIdSommet.Parameters["@gid"].Value = graphId;
 
                         // nécessite requête de recherche 
                         uint idSommet = Convert.ToUInt32(cmdIdSommet.ExecuteScalar());
@@ -260,10 +262,7 @@ namespace TourneeFutee
                     }
                 }
 
-                catch (Exception e)
-                {
-                    return 0;
-                }
+                return tid;
             }
             
 
