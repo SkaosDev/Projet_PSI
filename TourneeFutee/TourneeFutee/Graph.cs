@@ -12,9 +12,9 @@
 
         // Contruit un graphe (`directed`=true => orienté)
         // La valeur `noEdgeValue` est le poids modélisant l'absence d'un arc (0 par défaut)
-        public Graph(bool directed, float noEdgeValue = 0)
+        public Graph(bool isOriented = false, float noEdgeValue = 0, bool directed = false)
         {
-            this.directed = directed;
+            this.directed = isOriented || directed;
             this.noEdgeValue = noEdgeValue;
             this.adjacencyMatrix = new Matrix(0,0);
             this.vertexIndices = new Dictionary<string, int>();
@@ -43,8 +43,22 @@
         // Lecture seule
         public bool Directed
         {
-            get { 
-                return directed; 
+            get {
+                return directed;
+            }
+        }
+
+        public bool IsOriented
+        {
+            get {
+                return directed;
+            }
+        }
+
+        public int VertexCount
+        {
+            get {
+                return vertexIndices.Count;
             }
         }
 
@@ -66,6 +80,11 @@
 
 
         // --- Gestion des sommets ---
+
+        public bool ContainsVertex(string name)
+        {
+            return vertexIndices.ContainsKey(name);
+        }
 
         // Ajoute le sommet de nom `name` et de valeur `value` (0 par défaut) dans le graphe
         // Lève une ArgumentException s'il existe déjà un sommet avec le même nom dans le graphe

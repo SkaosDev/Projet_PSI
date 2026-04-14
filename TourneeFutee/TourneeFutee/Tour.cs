@@ -42,6 +42,13 @@
             }
         }
 
+        public float TotalCost
+        {
+            get {
+                return this.cost;
+            }
+        }
+
         public IList<string> Vertices
         {
             get { return this.vertices; }
