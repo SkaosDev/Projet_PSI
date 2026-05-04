@@ -37,7 +37,11 @@ namespace TourneeFutee
         /// <exception cref="Exception">Levée si la connexion échoue.</exception>
         public ServicePersistance(string serverIp, string dbname, string user, string pwd)
         {
-            string certPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "ca.pem");
+            string certPath = "";
+            if (serverIp.Contains("aivencloud"))
+            {
+                certPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "ca.pem"); // On utilise un certificat car on a utilisé une base de données en ligne plutôt que local
+            }
 
             string host = serverIp;
             string port = "3306";
@@ -48,7 +52,14 @@ namespace TourneeFutee
                 port = parts[1];
             }
 
-            _connectionString = $"server={host};port={port};database={dbname};uid={user};pwd={pwd};SslMode=Required;SslCa={certPath};";
+            if (serverIp.Contains("aivencloud"))
+            {
+                _connectionString = $"server={host};port={port};database={dbname};uid={user};pwd={pwd};SslMode=Required;SslCa={certPath};";
+            }
+            else
+            {
+                _connectionString = $"server={host};port={port};database={dbname};uid={user};pwd={pwd};";
+            }
 
             conn = OpenConnection();
         }
